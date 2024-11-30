@@ -151,6 +151,13 @@ static struct tp_common_ops double_tap_ops = {
 static void release_pen_event(void);
 static int disable_pen_input_device(bool disable);
 
+static void nvt_pen_update_firmware(void)
+{
+	mutex_lock(&ts->lock);
+	nvt_update_firmware(ts->fw_name);
+	mutex_unlock(&ts->lock);
+}
+
 static void nvt_switch_pen_firmware(bool on)
 {
 	if (on) {
@@ -184,6 +191,7 @@ static ssize_t pen_store(struct kobject *kobj, struct kobj_attribute *attr,
 	ts->pen_input_dev_enable = !!val;
 	disable_pen_input_device(!ts->pen_input_dev_enable);
 	nvt_switch_pen_firmware(ts->pen_input_dev_enable);
+	nvt_pen_update_firmware();
 	release_pen_event();
 
 	return count;
@@ -2482,6 +2490,7 @@ static int nvt_set_cur_value(int nvt_mode, int nvt_value)
 			ts->pen_input_dev_enable ? "ENABLE" : "DISABLE");
 		disable_pen_input_device(!ts->pen_input_dev_enable);
 		nvt_switch_pen_firmware(ts->pen_input_dev_enable);
+		nvt_pen_update_firmware();
 		release_pen_event();
 		return 0;
 	}
