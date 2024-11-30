@@ -183,6 +183,7 @@ static ssize_t pen_store(struct kobject *kobj, struct kobj_attribute *attr,
 
 	ts->pen_input_dev_enable = !!val;
 	disable_pen_input_device(!ts->pen_input_dev_enable);
+	nvt_switch_pen_firmware(ts->pen_input_dev_enable);
 	release_pen_event();
 
 	return count;
@@ -2480,6 +2481,7 @@ static int nvt_set_cur_value(int nvt_mode, int nvt_value)
 		NVT_LOG("%s pen input dev ",
 			ts->pen_input_dev_enable ? "ENABLE" : "DISABLE");
 		disable_pen_input_device(!ts->pen_input_dev_enable);
+		nvt_switch_pen_firmware(ts->pen_input_dev_enable);
 		release_pen_event();
 		return 0;
 	}
